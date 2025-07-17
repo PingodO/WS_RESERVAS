@@ -14,6 +14,7 @@ public class EstacionamientoWS {
 
     @WebMethod(operationName = "listarEstacionamientos")
     public List<Estacionamiento> listarEstacionamientos() {
+        System.out.println("DEBUG (ReservasWS): Recibida solicitud para listar estacionamientos.");
         return service.listar();
     }
 

@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Date; // Importación específica para java.sql.Date
 import java.sql.Time; // Importación específica para java.sql.Time
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -250,4 +251,23 @@ public class ReservaDAO {
             return false;
         }
     }
+    
+    public int contarReservasDelDia(int usuarioId, LocalDate fecha) {
+        int cantidad = 0;
+        String sql = "SELECT COUNT(*) FROM reservas WHERE usuario_id = ? AND fecha = ?";
+
+        try (Connection conn = conexion.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, usuarioId);
+            ps.setDate(2, java.sql.Date.valueOf(fecha));
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                cantidad = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cantidad;
+    }
+    
+    
 }
