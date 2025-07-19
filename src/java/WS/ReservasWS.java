@@ -28,6 +28,18 @@ public class ReservasWS {
     public Reserva buscarReservaPorId(@WebParam(name = "id") int id) {
         return service2.buscarPorId(id);
     }
+    
+    @WebMethod(operationName = "listarReservasActualesDeHoyPorUsuario")
+    public List<Reserva> listarReservasActualesDeHoyPorUsuario(@WebParam(name = "usuarioId") int usuarioId) {
+        // Llama al método correspondiente en tu ReservaService
+        return service2.listarReservasActualesDeHoyPorUsuario(usuarioId);
+    }
+
+    @WebMethod(operationName = "listarHistorialReservasPorUsuario")
+    public List<Reserva> listarHistorialReservasPorUsuario(@WebParam(name = "usuarioId") int usuarioId) {
+        // Llama al método correspondiente en tu ReservaService
+        return service2.listarHistorialReservasPorUsuario(usuarioId);
+    }
 
      @WebMethod(operationName = "generarReservaAutomatica")
     public Reserva generarReservaAutomatica( // El tipo de retorno es Reserva
@@ -67,5 +79,6 @@ public class ReservasWS {
         LocalDate fechaObjetivo = LocalDate.parse(fechaObjetivoStr);
         return service2.obtenerPuntosPorDia(usuarioId, fechaObjetivo);
     }
+    
     
 }

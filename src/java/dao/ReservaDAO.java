@@ -57,6 +57,115 @@ public class ReservaDAO {
 
         return lista;
     }
+    //aca comineza el listar reserva actual del usuario
+    public List<Reserva> listarReservasActualesDeHoyPorUsuario(int usuarioId) {
+        List<Reserva> lista = new ArrayList<>();
+        // **IMPORTANTE**: Usa CURDATE() y CURTIME() para que las consultas sean dinámicas.
+        // Si tu DB no es MySQL, cambia estas funciones por las equivalentes (ej. GETDATE() para SQL Server).
+        String sql = "SELECT r.id, u.nombre, u.apellido, e.numero, r.fecha, r.hora_inicio, r.hora_fin, r.estado " +
+                     "FROM reservas r " +
+                     "JOIN usuarios u ON r.usuario_id = u.id " +
+                     "JOIN estacionamiento e ON r.codEsta = e.codEsta " +
+                     "WHERE u.id = ? " +
+                     "AND r.fecha = CURDATE() " + // Fecha actual del servidor
+                     "AND r.hora_fin > CURTIME() " + // Hora actual del servidor
+                     "AND r.estado = 'reservada'";
+
+        try (Connection conn = conexion.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, usuarioId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(crearReservaDesdeResultSet(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
+    public List<Reserva> listarTodasLasReservasPorUsuario(int usuarioId) {
+        List<Reserva> lista = new ArrayList<>();
+
+        String sql = "SELECT r.id, r.usuario_id, r.codEsta, u.nombre AS nombreUsuario, " +
+                     "u.apellido AS apellidoUsuario, e.numero AS numeroEstacionamiento, " +
+                     "r.fecha, r.hora_inicio, r.hora_fin, r.estado " +
+                     "FROM reservas r " +
+                     "JOIN usuarios u ON r.usuario_id = u.id " +
+                     "JOIN estacionamiento e ON r.codEsta = e.codEsta " +
+                     "WHERE u.id = ? " +
+                     "ORDER BY r.fecha DESC, r.hora_inicio DESC";
+
+        try (Connection conn = conexion.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, usuarioId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Reserva reserva = new Reserva();
+                reserva.setId(rs.getInt("id"));
+                reserva.setUsuarioId(rs.getInt("usuario_id"));
+                reserva.setCodEsta(rs.getInt("codEsta"));
+                reserva.setNombreUsuario(rs.getString("nombreUsuario"));
+                reserva.setApellidoUsuario(rs.getString("apellidoUsuario"));
+                reserva.setNumeroEstacionamiento(rs.getString("numeroEstacionamiento"));
+                reserva.setFecha(rs.getString("fecha"));
+                reserva.setHoraInicio(rs.getString("hora_inicio"));
+                reserva.setHoraFin(rs.getString("hora_fin"));
+                reserva.setEstado(rs.getString("estado"));
+                lista.add(reserva);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+    
+    private Reserva crearReservaDesdeResultSet(ResultSet rs) throws SQLException {
+        Reserva r = new Reserva();
+        r.setId(rs.getInt("id"));
+        r.setNombreUsuario(rs.getString("nombre"));
+        r.setApellidoUsuario(rs.getString("apellido"));
+        r.setNumeroEstacionamiento(rs.getString("numero"));
+
+        Date fechaSql = rs.getDate("fecha");
+        Time horaInicioSql = rs.getTime("hora_inicio");
+        Time horaFinSql = rs.getTime("hora_fin");
+
+        r.setFecha(fechaSql != null ? fechaSql.toString() : null);
+        r.setHoraInicio(horaInicioSql != null ? horaInicioSql.toString() : null);
+        r.setHoraFin(horaFinSql != null ? horaFinSql.toString() : null);
+
+        r.setEstado(rs.getString("estado"));
+        return r;
+    }
+
+    private Reserva crearReservaDesdeResultSetConTodo(ResultSet rs) throws SQLException {
+        Reserva r = new Reserva();
+        r.setId(rs.getInt("id"));
+        r.setUsuarioId(rs.getInt("usuario_id"));
+        r.setCodEsta(rs.getInt("codEsta"));
+        r.setNombreUsuario(rs.getString("nombreUsuario"));
+        r.setApellidoUsuario(rs.getString("apellidoUsuario"));
+        r.setNumeroEstacionamiento(rs.getString("numeroEstacionamiento"));
+
+        Date fechaSql = rs.getDate("fecha");
+        Time horaInicioSql = rs.getTime("hora_inicio");
+        Time horaFinSql = rs.getTime("hora_fin");
+
+        r.setFecha(fechaSql != null ? fechaSql.toString() : null);
+        r.setHoraInicio(horaInicioSql != null ? horaInicioSql.toString() : null);
+        r.setHoraFin(horaFinSql != null ? horaFinSql.toString() : null);
+
+        r.setEstado(rs.getString("estado"));
+        return r;
+    }
+    //aca termina el listar reserva actual del usuario
     
    public boolean actualizarEstadoReserva(int idReserva, String nuevoEstado) {
     try (Connection conn = conexion.getConnection()) {
@@ -267,7 +376,6 @@ public class ReservaDAO {
             e.printStackTrace();
         }
         return cantidad;
-    }
-    
+    } 
     
 }

@@ -13,6 +13,8 @@ import modelo.Estacionamiento;
 import dao.ReservaDAO;
 import dao.EstacionamientoDAO;
 import dao.HorarioDAO;
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
 // import dao.PuntosAlumnoDAO; // Es probable que ya no necesites usar este DAO para reservas diarias
 
 public class ReservaService {
@@ -32,6 +34,14 @@ public class ReservaService {
 
     public Reserva buscarPorId(int id) {
         return reservaDAO.buscarPorId(id);
+    }
+
+    public List<Reserva> listarReservasActualesDeHoyPorUsuario(@WebParam(name = "usuarioId") int usuarioId) {
+        return reservaDAO.listarReservasActualesDeHoyPorUsuario(usuarioId);
+    }
+
+    public List<Reserva> listarHistorialReservasPorUsuario(@WebParam(name = "usuarioId") int usuarioId) {
+        return reservaDAO.listarTodasLasReservasPorUsuario(usuarioId);
     }
     
     // Este método maneja la creación base de la reserva, sin lógica de puntos
@@ -173,4 +183,5 @@ public class ReservaService {
     public int obtenerSaldoPuntosUsuario(int usuarioId) {
         return horarioDAO.obtenerSaldoPuntosUsuario(usuarioId);
     }
+    
 }
