@@ -32,8 +32,21 @@ public class EstacionamientoServlet extends HttpServlet {
 
         } else if ("eliminar".equals(accion)) {
             int id = Integer.parseInt(request.getParameter("id"));
-            service.eliminar(id);
+            //+ in @RR 
+            service.eliminar(id, "disponible");
+            //+ fin @RR 
             response.sendRedirect("listarEstacionamientos.jsp");
         }
+//+ in @RR         
+        else if ("liberarMultiples".equals(accion)) {
+            String[] ids = request.getParameterValues("ids");
+            if (ids != null) {
+                for (String s : ids) {
+                    service.eliminar(Integer.parseInt(s), "disponible");
+                }
+            }
+            response.sendRedirect("listarEstacionamientos.jsp");
+        }
+//+ fin @RR 
     }
 }

@@ -14,7 +14,6 @@ public class EstacionamientoWS {
 
     @WebMethod(operationName = "listarEstacionamientos")
     public List<Estacionamiento> listarEstacionamientos() {
-        System.out.println("DEBUG (ReservasWS): Recibida solicitud para listar estacionamientos.");
         return service.listar();
     }
 
@@ -35,6 +34,8 @@ public class EstacionamientoWS {
 
     @WebMethod(operationName = "eliminarEstacionamiento")
     public boolean eliminarEstacionamiento(@WebParam(name = "id") int id) {
-        return service.eliminar(id);
+        //+ in @RR 
+        return service.eliminar(id, "disponible");
+        //+ fin @RR 
     }
 }

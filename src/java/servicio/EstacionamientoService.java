@@ -2,11 +2,10 @@ package servicio;
 
 import dao.EstacionamientoDAO;
 import java.util.List;
-import javax.jws.WebMethod;
 import modelo.Estacionamiento;
 
 public class EstacionamientoService {
-    
+
     private EstacionamientoDAO dao = new EstacionamientoDAO();
 
     public List<Estacionamiento> listar() {
@@ -26,11 +25,9 @@ public class EstacionamientoService {
     public boolean actualizar(Estacionamiento e) {
         return dao.actualizar(e);
     }
-
-    public boolean eliminar(int id) {
-        return dao.eliminar(id);
+//+ in @RR 
+    public boolean eliminar(int id, String nuevoEstado) {
+        return dao.actualizarEstado(id, nuevoEstado);
     }
-    
-    
-    
+//+ fin @RR    
 }

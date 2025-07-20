@@ -128,13 +128,14 @@ public class EstacionamientoDAO {
         return false;
     }
 
-
-    public boolean eliminar(int id) {
-        String sql = "DELETE FROM estacionamiento WHERE codEsta = ?";
+//+ in @RR 
+    public boolean eliminar(int codEsta, String estado) {
+        String sql = "UPDATE FROM estacionamiento WHERE codEsta = ?";
         try (Connection con = conexion.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setInt(1, id);
+            ps.setString(1, estado);
+            ps.setInt(2, codEsta);
             return ps.executeUpdate() > 0;
 
         } catch (SQLException ex) {
@@ -142,5 +143,5 @@ public class EstacionamientoDAO {
         }
         return false;
     }
-    
+//+ fn @RR 
 }
